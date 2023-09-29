@@ -1,0 +1,46 @@
+version: "2.4"
+
+services:
+  odoo:
+    extends:
+      file: common.yaml
+      service: odoo
+    restart: unless-stopped
+    env_file:
+      - .docker/odoo.env
+      - .docker/db-access.env
+    environment:
+      DB_FILTER: "^prod"
+      DOODBA_ENVIRONMENT: "${DOODBA_ENVIRONMENT-prod}"
+      INITIAL_LANG: "es_ES"
+    depends_on:
+      - db
+    networks:
+      default:
+      inverseproxy_shared:
+    labels:
+      traefik.enable: 1
+      traefik.http.routers.whoami.rule:
+        "Host(`www.odoo-ong.com`) || Host(`odoo-ong.com`)"
+      doodba.domain.main: "odoo-ong.com"
+      # traefik.http.routers.whoami.entrypoints: "web"
+
+  db:
+    extends:
+      file: common.yaml
+      service: db
+    env_file:
+      - .docker/db-creation.env
+    restart: unless-stopped
+
+networks:
+  default:
+    driver_opts:
+      encrypted: 1
+
+  inverseproxy_shared:
+    external: true
+
+volumes:
+  filestore:
+  db:

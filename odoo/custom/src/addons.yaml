@@ -1,0 +1,11 @@
+account-reconcile:
+  - account_statement_base
+  - account_reconcile_oca
+contract:
+  - contract
+donation:
+  - donation_base
+  - donation
+web:
+  - web_responsive
+  - web_environment_ribbon
